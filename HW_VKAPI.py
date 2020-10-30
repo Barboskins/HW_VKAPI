@@ -1,5 +1,6 @@
 import requests
 from urllib.parse import urlencode, urljoin
+from pprint import pprint
 """Задача №1
 Пользователя нужно описать с помощью класса и реализовать метод поиска общих друзей, используя API VK.
 Задача №2
@@ -20,18 +21,22 @@ class VKAPIClient:
         self.version = version
         self.id = id
 
-    def __and__(self,other):
+    def finding_mutual_friends(self,id):
         friends_mutual_url = urljoin(API_BASE_URL, 'friends.getMutual')
         res = requests.get(friends_mutual_url, params={
             'source_uid': self.id,
-            "target_uid": other.id,
+            "target_uid": id,
             'access_token': self.token,
             "v": self.version
+
         })
         list_class = []
         for id in res.json()['response']:
-            list_class.append(VKAPIClient(TOKEN,V,id))
+            list_class.append(VKAPIClient(TOKEN, V, id))
         return list_class
+
+    def __and__(self,other):
+        return self.finding_mutual_friends(other.id)
 
     def __repr__(self):
         return f'VKAPIClient({TOKEN},{V},{self.id})'
@@ -42,7 +47,7 @@ class VKAPIClient:
 my_account = VKAPIClient(TOKEN, V, ID)
 other_account = VKAPIClient(TOKEN, V, 12345)
 
-# print(my_account & other_account)
+pprint(my_account & other_account)
 # print(my_account.output_link())
 
 
